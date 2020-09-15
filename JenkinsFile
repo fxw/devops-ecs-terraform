@@ -1,0 +1,62 @@
+pipeline {
+
+    agent any
+
+    parameters {
+        string(name: 'workspace', defaultValue: 'default', description: 'Workspace/environment file to use for deployment')
+        string(name: 'branch', defaultValue: 'master', description: 'git branch to build terraform')
+    }
+
+    environment {
+        ID_ACCOUNT = credentials("id-account-${workspace}")
+        ROLE_TERRAFORM = credentials("role-terraform-${workspace}")
+        EXTERNAL_ID = credentials('external-id')
+        PATHDIR = "fsmcore-infra"
+        REPO = "ssh://dce-vstf-srv:22/tfs/Delivery/Eabr.FsmCore/_git/FsmCore-infra"
+    }
+
+    stages {
+        stage('git clone') {
+            steps {
+                sh """rm -rf /var/lib/jenkins/${PATHDIR}
+                      cd /var/lib/jenkins
+                      git clone ${REPO}
+                      cd /var/lib/jenkins/${PATHDIR}
+                      git checkout ${branch} #remover depois
+                """
+            }
+        }
+
+        stage('provider_copy') {
+            steps {
+                sh "cp /var/lib/jenkins/provider-${params.workspace}.tf /var/lib/jenkins/${PATHDIR}/provider.tf"
+            }
+        }
+
+        stage('terraform plan') {
+            steps {
+                withAWS(role: "${ROLE_TERRAFORM}", roleAccount: "${ID_ACCOUNT}", externalId: "${EXTERNAL_ID}", roleSessionName: 'JENKINS') {
+                    sh """cd /var/lib/jenkins/${PATHDIR}
+        terraform init 
+        terraform workspace new ${params.workspace} || true
+        terraform workspace select ${params.workspace}
+        terraform plan -no-color"""
+                }
+            }
+        }
+        stage('Deploy approval') {
+            steps {
+                input "Run tf apply?"
+            }
+        }
+
+        stage('deploy to dev') {
+            steps {
+                withAWS(role: "${ROLE_TERRAFORM}", roleAccount: "${ID_ACCOUNT}", externalId: "${EXTERNAL_ID}", roleSessionName: 'JENKINS') {
+                    sh """cd /var/lib/jenkins/${PATHDIR}
+              terraform apply -auto-approve -no-color"""
+                }
+            }
+        }
+    }
+}

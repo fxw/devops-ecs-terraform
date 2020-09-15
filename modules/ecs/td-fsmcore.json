@@ -1,0 +1,71 @@
+[
+    {
+      "image": "${image_url}",
+      "name": "${container_name}",
+      "cpu": 512,
+      "memory": 256,
+      "essential": true,
+      "portMappings": [
+        {
+          "hostPort": 0,
+          "protocol": "tcp",
+          "containerPort": 80
+        }
+      ],
+
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "${log_group_name}",
+          "awslogs-region": "${log_group_region}",
+          "awslogs-stream-prefix": "${log_group_prefix}" 
+        }
+      },
+  
+      "dnsSearchDomains": null,
+      "entryPoint": null,
+      "command": null,
+      "linuxParameters": null,
+      "environment": [
+        { "name": "ASPNETCORE_ENVIRONMENT", "value": "${aspnetcore_environment}" },
+        { "name": "TOKEN_CRIPTOGRAPHIC_KEY", "value": "${token_criptographic_key}" },
+        { "name": "TZ", "value": "${tz}" },
+        { "name": "LOG_ELASTICSEARCH_URL", "value": "${log_elasticsearch_url}" },
+        { "name": "LOG_ELASTICSEARCH_INDEX_PREFIX", "value": "${log_elasticsearch_index_prefix}" },
+        { "name": "MIN_LOG_LEVEL", "value": "${min_log_level}" },
+        { "name": "ELASTIC_APM_SERVICE_NAME", "value": "${elastic_apm_service_name}" },
+        { "name": "ELASTIC_APM_ENVIRONMENT", "value": "${elastic_apm_environment}" },
+        { "name": "ELASTIC_APM_TRANSACTION_MAX_SPANS", "value": "${elastic_apm_transaction_max_spans}" },
+        { "name": "ELASTIC_APM_SECRET_TOKEN", "value": "${elastic_apm_secret_token}" },
+        { "name": "ELASTIC_APM_SERVER_URLS", "value": "${elastic_apm_server_urls}" },
+        { "name": "ELASTIC_APM_TRANSACTION_SAMPLE_RATE", "value": "${elastic_apm_transaction_sample_rate}" },
+        { "name": "ELASTIC_APM_LOG_LEVEL", "value": "${elastic_apm_log_level}" },
+        { "name": "URL_API_BASE", "value": "${url_api_base}"},
+        { "name": "URL_API_BASE_PRESENTATIONAPI", "value": "${url_api_base_presentationapi}" }
+      ],
+      "resourceRequirements": null,
+      "ulimits": null,
+      "dnsServers": null,
+      "mountPoints": [],
+      "workingDirectory": null,
+      "secrets": null,
+      "dockerSecurityOptions": null,
+      "memoryReservation": null,
+      "volumesFrom": [],
+      "stopTimeout": null,
+      "startTimeout": null,
+      "dependsOn": null,
+      "disableNetworking": null,
+      "interactive": null,
+      "healthCheck": null,
+      "links": null,
+      "hostname": null,
+      "extraHosts": null,
+      "pseudoTerminal": null,
+      "user": null,
+      "readonlyRootFilesystem": null,
+      "dockerLabels": null,
+      "systemControls": null,
+      "privileged": null
+    }
+  ]
